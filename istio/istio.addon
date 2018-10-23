@@ -1,0 +1,27 @@
+# Name: istio
+# Description: A service mesh
+# Required-Vars: NAMESPACE
+# Var-Defaults: NAMESPACE=istio-system
+
+oc adm policy add-scc-to-user anyuid -z istio-ingress-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z default -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z prometheus -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-egressgateway-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-citadel-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-ingressgateway-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-cleanup-old-ca-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-mixer-post-install-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-mixer-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-pilot-service-account -n #{NAMESPACE}
+oc adm policy add-scc-to-user anyuid -z istio-sidecar-injector-service-account -n #{NAMESPACE}
+oc adm policy add-cluster-role-to-user cluster-admin -z istio-galley-service-account -n #{NAMESPACE}
+
+# To avoid an error when removing
+oc annotate clusterrolebinding.rbac cluster-admin 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+oc annotate clusterrolebinding.rbac cluster-admins 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+
+# This kinda messes up #{NAMESPACE} since it's hard-coded
+oc apply -f https://storage.googleapis.com/knative-releases/serving/latest/istio.yaml
+
+# TODO: will this file ever need to change?
+oc replace -f istio-sidecar-injector.yaml -n #{NAMESPACE}
