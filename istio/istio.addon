@@ -28,3 +28,7 @@ oc apply -f https://storage.googleapis.com/knative-releases/serving/latest/istio
 
 # TODO: will this file ever need to change?
 oc replace -f istio-sidecar-injector.yaml -n #{NAMESPACE}
+
+# Wait up to 5 minutes for all pods to be ready
+token := oc sa get-token deployer -n #{NAMESPACE}
+ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/#{NAMESPACE}/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'

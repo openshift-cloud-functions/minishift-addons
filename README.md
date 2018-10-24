@@ -5,18 +5,13 @@ After cloning this repo locally, install its addons:
     $ minishift addons install minishift-addons/istio
     $ minishift addons install minishift-addons/knative
 
-With minishift running, install istio with its addon:
+First, install istio. This could take a few minutes, but once it
+completes you should see a number of running pods in the
+`istio-system` namespace.
 
     $ minishift addons apply istio
 
-When this command completes, istio is ready:
-
-    $ while oc get pods -n istio-system | grep -v -E "(Running|Completed|STATUS)"; do sleep 5; done
-
-Now install knative with its addon:
+Once that completes, install knative (both build and serving):
 
     $ minishift addons apply knative
 
-When this command completes, knative is ready:
-
-    $ while oc get pods -n knative-serving | grep -v -E "(Running|Completed|STATUS)"; do sleep 5; done

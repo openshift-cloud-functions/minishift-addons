@@ -11,3 +11,7 @@ oc adm policy add-cluster-role-to-user cluster-admin -z build-controller -n knat
 oc adm policy add-cluster-role-to-user cluster-admin -z controller -n knative-serving
 
 oc apply -f https://storage.googleapis.com/knative-releases/serving/latest/release-no-mon.yaml
+
+# Wait up to 5 minutes for all pods to be ready
+token := oc sa get-token deployer -n knative-serving
+ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/knative-serving/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'
