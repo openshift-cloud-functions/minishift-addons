@@ -1,5 +1,8 @@
 # Name: istio
 # Description: A service mesh
+# OpenShift-Version: >=3.11.0
+# Minishift-Version: >=1.25.0
+# Depends-On: anyuid
 # Required-Vars: NAMESPACE
 # Var-Defaults: NAMESPACE=istio-system
 
