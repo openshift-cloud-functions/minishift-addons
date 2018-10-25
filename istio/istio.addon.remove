@@ -14,6 +14,10 @@ oc adm policy remove-scc-from-user anyuid -z istio-mixer-post-install-account -n
 oc adm policy remove-scc-from-user anyuid -z istio-mixer-service-account -n #{NAMESPACE}
 oc adm policy remove-scc-from-user anyuid -z istio-pilot-service-account -n #{NAMESPACE}
 oc adm policy remove-scc-from-user anyuid -z istio-sidecar-injector-service-account -n #{NAMESPACE}
-oc adm policy remove-cluster-role-from-user cluster-admin -z istio-galley-service-account -n #{NAMESPACE}
+!oc adm policy remove-cluster-role-from-user cluster-admin -z istio-galley-service-account -n #{NAMESPACE}
 
-oc delete ns #{NAMESPACE}
+# TODO: deal with #{NAMESPACE}
+!oc delete -f https://storage.googleapis.com/knative-releases/serving/latest/istio.yaml
+
+# !oc delete mutatingwebhookconfiguration istio-sidecar-injector
+# !oc delete validatingwebhookconfiguration istio-galley
