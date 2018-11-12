@@ -6,24 +6,24 @@
 
 ## temporary installing Strimzi
 oc apply -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.8.2/strimzi-cluster-operator-0.8.2.yaml
-oc apply -f https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/0.8.2/examples/kafka/kafka-persistent.yaml
+# Simple Cluster with one ZK and one Kafka node
+oc apply -f https://gist.githubusercontent.com/matzew/a57485deff91591a442dcf6c7ab16c87/raw/f908e91a66d6fc79a20c5988890d493b2bbf8eb0/strimzi.yaml
 
 ## ADM policies
 oc adm policy add-scc-to-user anyuid -z eventing-controller -n knative-eventing
-oc adm policy add-scc-to-user anyuid -z bus-operator -n knative-eventing
 oc adm policy add-cluster-role-to-user cluster-admin -z eventing-controller -n knative-eventing
-oc adm policy add-cluster-role-to-user cluster-admin -z bus-operator -n knative-eventing
+oc adm policy add-cluster-role-to-user cluster-admin -z default -n knative-sources
+oc adm policy add-scc-to-user anyuid -z in-memory-channel-dispatcher -n knative-eventing
+oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-dispatcher -n knative-eventing
+oc adm policy add-scc-to-user anyuid -z in-memory-channel-controller -n knative-eventing
+oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-controller -n knative-eventing
 
-oc apply -f https://raw.githubusercontent.com/openshift-cloud-functions/knative-operators/881d0b2e89eed0538126d5b11467296b07d1d91b/etc/upstream/knative-eventing-kafka-80860ba.yaml
+
+oc apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release.yaml
+oc apply -f https://storage.googleapis.com/knative-releases/eventing-sources/latest/release.yaml
 
 # Wait up to 5 minutes for all pods to be ready
 token := oc sa get-token deployer -n knative-eventing
 ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/knative-eventing/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'
 
-#Bridging to our Strimzi/Kafka install
-oc -n knative-eventing create configmap kafka-bus-config --from-literal=KAFKA_BOOTSTRAP_SERVERS=my-cluster-kafka-bootstrap.myproject.svc.cluster.local:9092
-
-#Bus and ClusterBus
-oc apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release-bus-kafka.yaml
-oc apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release-clusterbus-kafka.yaml
-
+## TODO: run Kafka Provisioner
