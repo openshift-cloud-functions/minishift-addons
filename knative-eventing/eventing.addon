@@ -2,28 +2,34 @@
 # Description: knative-eventing, duh
 # OpenShift-Version: >=3.11.0
 # Minishift-Version: >=1.25.0
-# Depends-On: anyuid, istio
+# Depends-On: anyuid
+# Required-Vars: KNATIVE_EVENTING_VERSION
+# Var-Defaults: KNATIVE_EVENTING_VERSION=v0.2.0
 
 ## temporary installing Strimzi
 oc apply -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.8.2/strimzi-cluster-operator-0.8.2.yaml
 # Simple Cluster with one ZK and one Kafka node
 oc apply -f https://gist.githubusercontent.com/matzew/a57485deff91591a442dcf6c7ab16c87/raw/f908e91a66d6fc79a20c5988890d493b2bbf8eb0/strimzi.yaml
 
-## ADM policies
+# To avoid an error when removing
+oc annotate clusterrolebinding.rbac cluster-admin 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+oc annotate clusterrolebinding.rbac cluster-admins 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+
 oc adm policy add-scc-to-user anyuid -z eventing-controller -n knative-eventing
+oc adm policy add-scc-to-user anyuid -z in-memory-channel-dispatcher -n knative-eventing
+oc adm policy add-scc-to-user anyuid -z in-memory-channel-controller -n knative-eventing
+
+## Eventing and Eventing-Sources
+oc apply -f https://github.com/knative/eventing/releases/download/#{KNATIVE_EVENTING_VERSION}/release.yaml
+oc apply -f https://github.com/knative/eventing-sources/releases/download/#{KNATIVE_EVENTING_VERSION}/release.yaml
+
 oc adm policy add-cluster-role-to-user cluster-admin -z eventing-controller -n knative-eventing
 oc adm policy add-cluster-role-to-user cluster-admin -z default -n knative-sources
-oc adm policy add-scc-to-user anyuid -z in-memory-channel-dispatcher -n knative-eventing
 oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-dispatcher -n knative-eventing
-oc adm policy add-scc-to-user anyuid -z in-memory-channel-controller -n knative-eventing
 oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-controller -n knative-eventing
-
-## Eventing and Eventing-Sources (pre) 0.2.0
-oc apply -f https://raw.githubusercontent.com/openshift-cloud-functions/knative-operators/d2bbb3553951590e7727f14ead229900429fd2b8/etc/upstream/knative-eventing-0.2.0.yaml
-oc apply -f https://raw.githubusercontent.com/openshift-cloud-functions/knative-operators/d2bbb3553951590e7727f14ead229900429fd2b8/etc/upstream/knative-eventing-sources-0.2.0.yaml
 
 # Wait up to 5 minutes for all pods to be ready
 token := oc sa get-token deployer -n knative-eventing
 ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/knative-eventing/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'
 
-## TODO: run Kafka Provisioner
+## TODO: run Kafka Provisioner setup
