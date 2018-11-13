@@ -18,9 +18,9 @@ oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-dispat
 oc adm policy add-scc-to-user anyuid -z in-memory-channel-controller -n knative-eventing
 oc adm policy add-cluster-role-to-user cluster-admin -z in-memory-channel-controller -n knative-eventing
 
-
-oc apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release.yaml
-oc apply -f https://storage.googleapis.com/knative-releases/eventing-sources/latest/release.yaml
+## Eventing and Eventing-Sources (pre) 0.2.0
+oc apply -f https://raw.githubusercontent.com/openshift-cloud-functions/knative-operators/d2bbb3553951590e7727f14ead229900429fd2b8/etc/upstream/knative-eventing-0.2.0.yaml
+oc apply -f https://raw.githubusercontent.com/openshift-cloud-functions/knative-operators/d2bbb3553951590e7727f14ead229900429fd2b8/etc/upstream/knative-eventing-sources-0.2.0.yaml
 
 # Wait up to 5 minutes for all pods to be ready
 token := oc sa get-token deployer -n knative-eventing
