@@ -16,6 +16,6 @@ Once that completes, install knative (both build and serving):
 
     $ minishift addons apply knative
 
-Once that completes, you can install knative-eventing:
+Once that completes, you can install knative-eventing and knative-sources:
 
     $ minishift addons apply knative-eventing
