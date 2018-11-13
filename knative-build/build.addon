@@ -1,0 +1,22 @@
+# Name: knative-build
+# Description: Install knative build resources
+# OpenShift-Version: >=3.11.0
+# Minishift-Version: >=1.25.0
+# Depends-On: anyuid
+# Required-Vars: KNATIVE_VERSION
+# Var-Defaults: KNATIVE_VERSION=v0.2.1
+
+# To avoid an error when removing
+oc annotate clusterrolebinding.rbac cluster-admin 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+oc annotate clusterrolebinding.rbac cluster-admins 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+
+oc adm policy add-scc-to-user anyuid -z build-controller -n knative-build
+
+# Image CRD's may be referenced before they're applied so we ignore the return code
+!oc apply -f https://github.com/knative/serving/releases/download/#{KNATIVE_VERSION}/build.yaml
+
+oc adm policy add-cluster-role-to-user cluster-admin -z build-controller -n knative-build
+
+# Wait up to 5 minutes for all pods to be ready
+token := oc sa get-token deployer -n knative-build
+ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/knative-build/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'
