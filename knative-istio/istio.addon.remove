@@ -1,7 +1,7 @@
 # Name: knative-istio
 # Description: Revert knative istio install
-# Required-Vars: KNATIVE_VERSION
-# Var-Defaults: KNATIVE_VERSION=v0.2.1
+# Required-Vars: KNATIVE_ISTIO_VERSION
+# Var-Defaults: KNATIVE_ISTIO_VERSION=v0.2.1
 
 oc adm policy remove-scc-from-user anyuid -z istio-ingress-service-account -n istio-system
 oc adm policy remove-scc-from-user anyuid -z default -n istio-system
@@ -16,7 +16,7 @@ oc adm policy remove-scc-from-user anyuid -z istio-pilot-service-account -n isti
 oc adm policy remove-scc-from-user anyuid -z istio-sidecar-injector-service-account -n istio-system
 !oc adm policy remove-cluster-role-from-user cluster-admin -z istio-galley-service-account -n istio-system
 
-!oc delete -f https://github.com/knative/serving/releases/download/#{KNATIVE_VERSION}/istio.yaml
+!oc delete -f https://github.com/knative/serving/releases/download/#{KNATIVE_ISTIO_VERSION}/istio.yaml
 
 # !oc delete mutatingwebhookconfiguration istio-sidecar-injector
 # !oc delete validatingwebhookconfiguration istio-galley

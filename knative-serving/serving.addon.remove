@@ -1,10 +1,10 @@
 # Name: knative-serving
 # Description: Revert knative serving install
-# Required-Vars: KNATIVE_VERSION
-# Var-Defaults: KNATIVE_VERSION=v0.2.1
+# Required-Vars: KNATIVE_SERVING_VERSION
+# Var-Defaults: KNATIVE_SERVING_VERSION=v0.2.2
 
 oc adm policy remove-scc-from-user anyuid -z controller -n knative-serving
 oc adm policy remove-scc-from-user anyuid -z autoscaler -n knative-serving
 oc adm policy remove-cluster-role-from-user cluster-admin -z controller -n knative-serving
 
-!oc delete -f https://github.com/knative/serving/releases/download/#{KNATIVE_VERSION}/serving.yaml
+!oc delete -f https://github.com/knative/serving/releases/download/#{KNATIVE_SERVING_VERSION}/serving.yaml

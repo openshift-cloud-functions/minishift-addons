@@ -1,9 +1,9 @@
 # Name: knative-build
 # Description: Revert knative build install
-# Required-Vars: KNATIVE_VERSION
-# Var-Defaults: KNATIVE_VERSION=v0.2.1
+# Required-Vars: KNATIVE_BUILD_VERSION
+# Var-Defaults: KNATIVE_BUILD_VERSION=v0.2.0
 
 oc adm policy remove-scc-from-user anyuid -z build-controller -n knative-build
 !oc adm policy remove-cluster-role-from-user cluster-admin -z build-controller -n knative-build
 
-!oc delete -f https://github.com/knative/serving/releases/download/#{KNATIVE_VERSION}/build.yaml
+!oc delete -f https://github.com/knative/build/releases/download/#{KNATIVE_BUILD_VERSION}/release.yaml

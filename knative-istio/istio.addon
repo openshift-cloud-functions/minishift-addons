@@ -3,8 +3,8 @@
 # OpenShift-Version: >=3.11.0
 # Minishift-Version: >=1.25.0
 # Depends-On: anyuid
-# Required-Vars: KNATIVE_VERSION
-# Var-Defaults: KNATIVE_VERSION=v0.2.1
+# Required-Vars: KNATIVE_ISTIO_VERSION
+# Var-Defaults: KNATIVE_ISTIO_VERSION=v0.2.1
 
 oc adm policy add-scc-to-user anyuid -z istio-ingress-service-account -n istio-system
 oc adm policy add-scc-to-user anyuid -z default -n istio-system
@@ -22,7 +22,7 @@ oc adm policy add-scc-to-user anyuid -z istio-sidecar-injector-service-account -
 oc annotate clusterrolebinding.rbac cluster-admin 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
 oc annotate clusterrolebinding.rbac cluster-admins 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
 
-oc apply -f https://github.com/knative/serving/releases/download/#{KNATIVE_VERSION}/istio.yaml
+oc apply -f https://github.com/knative/serving/releases/download/#{KNATIVE_ISTIO_VERSION}/istio.yaml
 
 # TODO: will this file ever need to change?
 oc replace -f istio-sidecar-injector.yaml -n istio-system
