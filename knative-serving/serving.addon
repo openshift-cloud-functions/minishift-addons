@@ -2,7 +2,7 @@
 # Description: Install knative serving resources
 # OpenShift-Version: >=3.11.0
 # Minishift-Version: >=1.25.0
-# Depends-On: anyuid
+# Depends-On: anyuid, knative-istio
 # Required-Vars: KNATIVE_SERVING_VERSION
 # Var-Defaults: KNATIVE_SERVING_VERSION=v0.2.2
 
