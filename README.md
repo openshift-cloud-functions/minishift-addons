@@ -2,9 +2,16 @@
 
 ### Install
 
+Install Istio using the official Minishift addon:
+
+    git clone https://github.com/minishift/minishift-addons "$REPO_DIR/minishift-addons"
+    minishift addon install "$REPO_DIR/minishift-addons/add-ons/istio"
+    until minishift addon apply istio; do sleep 1; done
+    timeout 600 bash -c -- 'until oc get pods -n istio-system | grep openshift-ansible-istio-installer | grep Completed; do sleep 5; oc get pods -n istio-system; done'
+
+
 After cloning this repo locally, install your desired addons:
 
-    $ minishift addons install minishift-addons/knative-istio
     $ minishift addons install minishift-addons/knative-build
     $ minishift addons install minishift-addons/knative-serving
     $ minishift addons install minishift-addons/knative-eventing
