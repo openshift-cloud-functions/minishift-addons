@@ -1,0 +1,24 @@
+# Name: knative-build-pipeline
+# Description: Install knative build-pipeline resources
+# OpenShift-Version: >=3.11.0
+# Minishift-Version: >=1.25.0
+# Depends-On: anyuid
+# Required-Vars: KNATIVE_BUILD_PIPELINE_VERSION
+# Var-Defaults: KNATIVE_BUILD_PIPELINE_VERSION=latest
+
+# To avoid an error when removing
+oc annotate clusterrolebinding.rbac cluster-admin 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+oc annotate clusterrolebinding.rbac cluster-admins 'rbac.authorization.kubernetes.io/autoupdate=false' --overwrite
+
+oc adm policy add-scc-to-user anyuid -z build-pipeline-controller -n knative-build-pipeline
+
+# Image CRD's may be referenced before they're applied so we ignore the return code
+# once we have actual releases
+# !oc apply -f https://github.com/knative/build-pipeline/releases/download/#{KNATIVE_BUILD_PIPELINE_VERSION}/release.yaml
+!oc apply -f https://storage.googleapis.com/knative-nightly/build-pipeline/#{KNATIVE_BUILD_PIPELINE_VERSION}/release.yaml
+
+oc adm policy add-cluster-role-to-user cluster-admin -z build-pipeline-controller -n knative-build-pipeline
+
+# Wait up to 5 minutes for all pods to be ready
+token := oc sa get-token deployer -n knative-build-pipeline
+ssh timeout 300 bash -c -- 'while curl -s -k -H "Authorization: Bearer #{token}" https://#{ip}:8443/api/v1/namespaces/knative-build-pipeline/pods | grep phase | grep -v -E "(Running|Succeeded)"; do sleep 5; done'

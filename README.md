@@ -6,6 +6,7 @@ After cloning this repo locally, install your desired addons:
 
     $ minishift addons install minishift-addons/knative-istio
     $ minishift addons install minishift-addons/knative-build
+    $ minishift addons install minishift-addons/knative-build-pipeline
     $ minishift addons install minishift-addons/knative-serving
     $ minishift addons install minishift-addons/knative-eventing
 
@@ -20,6 +21,7 @@ upstream knative-serving repo.
 Once that completes, install the knative resources you desire:
 
     $ minishift addons apply knative-build
+    $ minishift addons apply knative-build-pipeline
     $ minishift addons apply knative-serving
     $ minishift addons apply knative-eventing
 
@@ -35,6 +37,7 @@ example:
 You can remove the resources created by each addon like so:
 
     $ minishift addons remove knative-build
+    $ minishift addons remove knative-build-pipeline
     $ minishift addons remove knative-serving
     $ minishift addons remove knative-eventing
     $ minishift addons remove knative-istio
@@ -44,6 +47,7 @@ You can remove the resources created by each addon like so:
 And you can uninstall the addons thusly:
 
     $ minishift addons uninstall knative-build
+    $ minishift addons uninstall knative-build-pipeline
     $ minishift addons uninstall knative-serving
     $ minishift addons uninstall knative-eventing
     $ minishift addons uninstall knative-istio
@@ -58,6 +62,7 @@ each addon may be optionally configured with any older version you
 wish to install by setting an addon environment variable. For example,
 
     $ minishift addons apply --addon-env KNATIVE_BUILD_VERSION=v0.2.0 knative-build
+    $ minishift addons apply --addon-env KNATIVE_BUILD_PIPELINE_VERSION=previous/v20181204-559397d7-dirty knative-build-pipeline
     $ minishift addons apply --addon-env KNATIVE_SERVING_VERSION=v0.2.2 knative-serving
     $ minishift addons apply --addon-env KNATIVE_EVENTING_VERSION=v0.2.0 knative-eventing
 

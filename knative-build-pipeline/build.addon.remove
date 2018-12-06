@@ -1,0 +1,11 @@
+# Name: knative-build-pipeline
+# Description: Revert knative build-pipeline install
+# Required-Vars: KNATIVE_BUILD_PIPELINE_VERSION
+# Var-Defaults: KNATIVE_BUILD_PIPELINE_VERSION=latest
+
+oc adm policy remove-scc-from-user anyuid -z build-controller-pipeline -n knative-build-pipeline
+!oc adm policy remove-cluster-role-from-user cluster-admin -z build-controller-pipeline -n knative-build-pipeline
+
+# Once we have actual releases
+# !oc delete -f https://github.com/knative/build-pipeline/releases/download/#{KNATIVE_BUILD_PIPELINE_VERSION}/release.yaml
+!oc delete -f https://storage.googleapis.com/knative-nightly/build-pipeline/#{KNATIVE_BUILD_PIPELINE_VERSION}/release.yaml
